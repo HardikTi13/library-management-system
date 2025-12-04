@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from cloudinary.models import CloudinaryField
 
 class UserProfile(models.Model):
     USER_TYPE_CHOICES = [
@@ -19,6 +20,7 @@ class Book(models.Model):
     author = models.CharField(max_length=255)
     isbn = models.CharField(max_length=13, unique=True)
     category = models.CharField(max_length=100)
+    cover_image = CloudinaryField('image', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

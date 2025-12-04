@@ -40,9 +40,13 @@ function LibrarianPanel({ showToast, refreshBooks }) {
 
   const handleAddBook = async (e) => {
     e.preventDefault();
-    const data = Object.fromEntries(new FormData(e.target));
+    const formData = new FormData(e.target);
     try {
-      await axios.post('/api/books/', data);
+      await axios.post('/api/books/', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
       showToast('Book added successfully');
       e.target.reset();
       refreshBooks();
@@ -120,6 +124,10 @@ function LibrarianPanel({ showToast, refreshBooks }) {
             <div className="form-group"><label>Author</label><input name="author" required /></div>
             <div className="form-group"><label>ISBN</label><input name="isbn" required /></div>
             <div className="form-group"><label>Category</label><input name="category" required /></div>
+            <div className="form-group">
+              <label>Cover Image (optional)</label>
+              <input type="file" name="cover_image" accept="image/*" />
+            </div>
             <button type="submit" className="btn">Add Book</button>
           </form>
         )}

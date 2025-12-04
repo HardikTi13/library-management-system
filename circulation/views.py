@@ -19,21 +19,53 @@ from django.db.models import Q
 @method_decorator(csrf_exempt, name='dispatch')
 class BookListCreateView(View):
     def get(self, request):
-        books = list(Book.objects.values())
-        return JsonResponse(books, safe=False)
+        books = Book.objects.all()
+        books_data = []
+        for book in books:
+            book_dict = {
+                'id': book.id,
+                'title': book.title,
+                'author': book.author,
+                'isbn': book.isbn,
+                'category': book.category,
+                'cover_image': book.cover_image.url if book.cover_image else None,
+                'created_at': book.created_at,
+                'updated_at': book.updated_at,
+            }
+            books_data.append(book_dict)
+        return JsonResponse(books_data, safe=False)
 
     def post(self, request):
         try:
-            data = json.loads(request.body)
-            book = Book.objects.create(
-                title=data['title'],
-                author=data['author'],
-                isbn=data['isbn'],
-                category=data['category']
-            )
+            # Handle multipart form data for image upload
+            if request.content_type.startswith('multipart/form-data'):
+                title = request.POST.get('title')
+                author = request.POST.get('author')
+                isbn = request.POST.get('isbn')
+                category = request.POST.get('category')
+                cover_image = request.FILES.get('cover_image')
+                
+                book = Book.objects.create(
+                    title=title,
+                    author=author,
+                    isbn=isbn,
+                    category=category,
+                    cover_image=cover_image
+                )
+            else:
+                # Handle JSON data (backward compatibility)
+                data = json.loads(request.body)
+                book = Book.objects.create(
+                    title=data['title'],
+                    author=data['author'],
+                    isbn=data['isbn'],
+                    category=data['category']
+                )
+            
             return JsonResponse({
                 'id': book.id,
                 'title': book.title,
+                'cover_image': book.cover_image.url if book.cover_image else None,
                 'message': 'Book created successfully'
             }, status=201)
         except Exception as e:
