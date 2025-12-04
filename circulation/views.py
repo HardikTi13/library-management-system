@@ -47,20 +47,30 @@ def signup(request):
             username = data.get('username')
             password = data.get('password')
             email = data.get('email', '')
+            user_type = data.get('user_type', 'MEMBER')  # Default to MEMBER if not specified
+
+            # Validate user_type
+            if user_type not in ['MEMBER', 'LIBRARIAN']:
+                return JsonResponse({'error': 'Invalid user type. Must be MEMBER or LIBRARIAN'}, status=400)
 
             if User.objects.filter(username=username).exists():
                 return JsonResponse({'error': 'Username already exists'}, status=400)
 
             user = User.objects.create_user(username=username, password=password, email=email)
             
-            # Create UserProfile with MEMBER type (librarians can only be created via admin)
-            UserProfile.objects.create(user=user, user_type='MEMBER')
+            # Create UserProfile with specified user type
+            UserProfile.objects.create(user=user, user_type=user_type)
             
             # Auto-generate Library ID
             library_id = f"LIB-{uuid.uuid4().hex[:8].upper()}"
             Member.objects.create(user=user, library_id=library_id)
             
-            return JsonResponse({'message': 'User created successfully', 'id': user.id}, status=201)
+            return JsonResponse({
+                'message': 'User created successfully',
+                'id': user.id,
+                'user_type': user_type,
+                'library_id': library_id
+            }, status=201)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=400)
     return JsonResponse({'error': 'Method not allowed'}, status=405)
