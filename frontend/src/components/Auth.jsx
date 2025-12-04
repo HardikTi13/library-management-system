@@ -44,19 +44,10 @@ function Auth({ onLogin, showToast }) {
             <input type="text" name="username" required />
           </div>
           {mode === 'signup' && (
-            <>
-              <div className="form-group">
-                <label>Email</label>
-                <input type="email" name="email" required />
-              </div>
-              <div className="form-group">
-                <label>I am a</label>
-                <select name="user_type" required defaultValue="MEMBER">
-                  <option value="MEMBER">Member (Borrow Books)</option>
-                  <option value="LIBRARIAN">Librarian (Manage Library)</option>
-                </select>
-              </div>
-            </>
+            <div className="form-group">
+              <label>Email</label>
+              <input type="email" name="email" required />
+            </div>
           )}
           <div className="form-group">
             <label>Password</label>

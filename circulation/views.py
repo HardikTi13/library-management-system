@@ -47,19 +47,14 @@ def signup(request):
             username = data.get('username')
             password = data.get('password')
             email = data.get('email', '')
-            user_type = data.get('user_type', 'MEMBER')  # Default to MEMBER if not specified
-
-            # Validate user_type
-            if user_type not in ['MEMBER', 'LIBRARIAN']:
-                return JsonResponse({'error': 'Invalid user type. Must be MEMBER or LIBRARIAN'}, status=400)
 
             if User.objects.filter(username=username).exists():
                 return JsonResponse({'error': 'Username already exists'}, status=400)
 
             user = User.objects.create_user(username=username, password=password, email=email)
             
-            # Create UserProfile with specified user type
-            UserProfile.objects.create(user=user, user_type=user_type)
+            # Always create as MEMBER - librarians must be created via admin panel
+            UserProfile.objects.create(user=user, user_type='MEMBER')
             
             # Auto-generate Library ID
             library_id = f"LIB-{uuid.uuid4().hex[:8].upper()}"
@@ -68,7 +63,6 @@ def signup(request):
             return JsonResponse({
                 'message': 'User created successfully',
                 'id': user.id,
-                'user_type': user_type,
                 'library_id': library_id
             }, status=201)
         except Exception as e:
