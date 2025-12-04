@@ -1,7 +1,8 @@
 from django.urls import path
-from .views import BookListCreateView, BookCopyListCreateView, MemberView, LoanCreateView, LoanReturnView, ReservationView, signup, signin, LoanListView, ReservationListView, cancel_reservation
+from .views import BookListCreateView, BookCopyListCreateView, MemberView, LoanCreateView, LoanReturnView, ReservationView, signup, signin, LoanListView, ReservationListView, cancel_reservation, health_check
 
 urlpatterns = [
+    path('health/', health_check, name='health-check'),
     path('books/', BookListCreateView.as_view(), name='book-list-create'),
     path('books/<int:book_id>/copies/', BookCopyListCreateView.as_view(), name='book-copy-list-create'),
     path('members/', MemberView.as_view(), name='member-list-create'),

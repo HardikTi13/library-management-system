@@ -1,6 +1,11 @@
 from django.http import JsonResponse
 
 from django.views.decorators.csrf import csrf_exempt
+
+# Health check endpoint
+@csrf_exempt
+def health_check(request):
+    return JsonResponse({'status': 'ok', 'message': 'Server is running'}, status=200)
 from django.utils.decorators import method_decorator
 from django.utils import timezone
 from django.views import View
