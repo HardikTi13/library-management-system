@@ -79,7 +79,13 @@ function Dashboard({ user, member, books, loans, reservations, refreshData, show
           <div className="books-grid">
             {filteredBooks.map(book => (
               <div key={book.id} className="book-card" onClick={() => setSelectedBook(book)}>
-                <div className="book-cover">📚</div>
+                <div className="book-cover">
+                  {book.cover_image ? (
+                    <img src={book.cover_image} alt={book.title} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px 8px 0 0' }} />
+                  ) : (
+                    <span style={{ fontSize: '3rem' }}>📚</span>
+                  )}
+                </div>
                 <div className="book-info">
                   <div className="book-title" title={book.title}>{book.title}</div>
                   <div className="book-author">{book.author}</div>
@@ -153,6 +159,15 @@ function Dashboard({ user, member, books, loans, reservations, refreshData, show
         <div className="modal-overlay" onClick={() => setSelectedBook(null)}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
             <button className="close-btn" onClick={() => setSelectedBook(null)}>×</button>
+            {selectedBook.cover_image && (
+              <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+                <img 
+                  src={selectedBook.cover_image} 
+                  alt={selectedBook.title} 
+                  style={{ maxWidth: '200px', maxHeight: '300px', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }} 
+                />
+              </div>
+            )}
             <h2>{selectedBook.title}</h2>
             <div className="book-details">
                 <p><strong>Author:</strong> {selectedBook.author}</p>
