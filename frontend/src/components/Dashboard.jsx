@@ -109,26 +109,24 @@ function Dashboard({ user, member, books, loans, reservations, refreshData, show
 
       {view === 'loans' && (
         <div className="tab-content active">
-          <div className="loans-list">
+          <div className="status-grid">
             {loans.length === 0 ? (
-              <p style={{ color: 'var(--text-secondary)', textAlign: 'center' }}>No active loans.</p>
+              <p style={{ color: 'var(--text-secondary)', textAlign: 'center', gridColumn: '1/-1' }}>No active loans.</p>
             ) : (
               loans.map(loan => (
-                <div key={loan.id} className="list-item">
-                  <div className="item-image">
+                <div key={loan.id} className="status-card">
+                  <div className="card-image">
                     {loan.copy__book__cover_image ? (
-                      <img src={`/media/${loan.copy__book__cover_image}`} alt={loan.copy__book__title} style={{ width: '60px', height: '90px', objectFit: 'cover', borderRadius: '4px', marginRight: '1rem' }} />
+                      <img src={`/media/${loan.copy__book__cover_image}`} alt={loan.copy__book__title} />
                     ) : (
-                      <div style={{ width: '60px', height: '90px', background: '#e2e8f0', borderRadius: '4px', marginRight: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>📚</div>
+                      <div className="placeholder-image">📚</div>
                     )}
-                  </div>
-                  <div className="item-info">
-                    <h4>{loan.copy__book__title}</h4>
-                    <p>Due: {formatDate(loan.due_date)}</p>
-                    {loan.status === 'OVERDUE' && <p style={{color: 'var(--danger)'}}>Overdue!</p>}
-                  </div>
-                  <div className="item-status">
                     <span className={`status-badge status-${loan.status.toLowerCase()}`}>{loan.status}</span>
+                  </div>
+                  <div className="card-details">
+                    <h4>{loan.copy__book__title}</h4>
+                    <p className="card-date">Due: {formatDate(loan.due_date)}</p>
+                    {loan.status === 'OVERDUE' && <p className="overdue-alert">Overdue!</p>}
                   </div>
                 </div>
               ))
@@ -139,29 +137,26 @@ function Dashboard({ user, member, books, loans, reservations, refreshData, show
 
       {view === 'reservations' && (
         <div className="tab-content active">
-          <div className="reservations-list">
+          <div className="status-grid">
             {reservations.length === 0 ? (
-              <p style={{ color: 'var(--text-secondary)', textAlign: 'center' }}>No reservations.</p>
+              <p style={{ color: 'var(--text-secondary)', textAlign: 'center', gridColumn: '1/-1' }}>No reservations.</p>
             ) : (
               reservations.map(res => (
-                <div key={res.id} className="list-item">
-                  <div className="item-image">
+                <div key={res.id} className="status-card">
+                  <div className="card-image">
                     {res.book__cover_image ? (
-                      <img src={`/media/${res.book__cover_image}`} alt={res.book__title} style={{ width: '60px', height: '90px', objectFit: 'cover', borderRadius: '4px', marginRight: '1rem' }} />
+                      <img src={`/media/${res.book__cover_image}`} alt={res.book__title} />
                     ) : (
-                      <div style={{ width: '60px', height: '90px', background: '#e2e8f0', borderRadius: '4px', marginRight: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>📚</div>
+                      <div className="placeholder-image">📚</div>
                     )}
-                  </div>
-                  <div className="item-info">
-                    <h4>{res.book__title}</h4>
-                    <p>Expires: {formatDate(res.expires_at)}</p>
-                  </div>
-                  <div className="item-actions" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                     <span className={`status-badge status-${res.status.toLowerCase()}`}>{res.status}</span>
+                  </div>
+                  <div className="card-details">
+                    <h4>{res.book__title}</h4>
+                    <p className="card-date">Expires: {formatDate(res.expires_at)}</p>
                     {res.status === 'PENDING' && (
                       <button 
-                        className="btn" 
-                        style={{ padding: '0.5rem 1rem', fontSize: '0.8rem', background: 'var(--danger)' }}
+                        className="btn cancel-btn" 
                         onClick={() => handleCancelReservation(res.id)}
                       >
                         Cancel
