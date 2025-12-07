@@ -5,7 +5,7 @@ import Dashboard from './components/Dashboard';
 import LibrarianPanel from './components/LibrarianPanel';
 
 // Configure Axios
-axios.defaults.baseURL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
+axios.defaults.baseURL = import.meta.env.VITE_API_URL || '';
 
 function App() {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('library_user')) || null);
