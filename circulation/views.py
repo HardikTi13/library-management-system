@@ -14,29 +14,33 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 import json
 import uuid
+import traceback
 from django.db.models import Q
 
 @method_decorator(csrf_exempt, name='dispatch')
 class BookListCreateView(View):
     def get(self, request):
-        books = Book.objects.all()
-        books_data = []
-        for book in books:
-            book_dict = {
-                'id': book.id,
-                'title': book.title,
-                'author': book.author,
-                'isbn': book.isbn,
-                'category': book.category,
-                'isbn': book.isbn,
-                'category': book.category,
-                'about': book.about,
-                'cover_image': book.cover_image.url if book.cover_image else None,
-                'created_at': book.created_at,
-                'updated_at': book.updated_at,
-            }
-            books_data.append(book_dict)
-        return JsonResponse(books_data, safe=False)
+        try:
+            books = Book.objects.all()
+            books_data = []
+            for book in books:
+                book_dict = {
+                    'id': book.id,
+                    'title': book.title,
+                    'author': book.author,
+                    'isbn': book.isbn,
+                    'category': book.category,
+                    'isbn': book.isbn,
+                    'category': book.category,
+                    'about': book.about,
+                    'cover_image': book.cover_image.url if book.cover_image else None,
+                    'created_at': book.created_at,
+                    'updated_at': book.updated_at,
+                }
+                books_data.append(book_dict)
+            return JsonResponse(books_data, safe=False)
+        except Exception as e:
+            return JsonResponse({'error': str(e), 'traceback': traceback.format_exc()}, status=500)
 
     def post(self, request):
         try:
@@ -360,38 +364,44 @@ class ReservationView(View):
 @method_decorator(csrf_exempt, name='dispatch')
 class LoanListView(View):
     def get(self, request):
-        member_id = request.GET.get('member_id')
-        if member_id:
-            loans = list(Loan.objects.filter(member_id=member_id).values(
-                'id', 'copy__book__id', 'copy__book__title', 'copy__book__cover_image', 'due_date', 'return_date', 'status'
-            ))
-        else:
-            loans = list(Loan.objects.values(
-                'id', 'copy__book__id', 'copy__book__title', 'copy__book__cover_image', 'due_date', 'return_date', 'status'
-            ))
-        return JsonResponse(loans, safe=False)
+        try:
+            member_id = request.GET.get('member_id')
+            if member_id:
+                loans = list(Loan.objects.filter(member_id=member_id).values(
+                    'id', 'copy__book__id', 'copy__book__title', 'copy__book__cover_image', 'due_date', 'return_date', 'status'
+                ))
+            else:
+                loans = list(Loan.objects.values(
+                    'id', 'copy__book__id', 'copy__book__title', 'copy__book__cover_image', 'due_date', 'return_date', 'status'
+                ))
+            return JsonResponse(loans, safe=False)
+        except Exception as e:
+            return JsonResponse({'error': str(e), 'traceback': traceback.format_exc()}, status=500)
 
 
 @method_decorator(csrf_exempt, name='dispatch')
 class ReservationListView(View):
     def get(self, request):
-        # First, update any expired reservations
-        now = timezone.now()
-        Reservation.objects.filter(
-            status='PENDING',
-            expires_at__lt=now
-        ).update(status='EXPIRED')
-        
-        member_id = request.GET.get('member_id')
-        if member_id:
-            reservations = list(Reservation.objects.filter(member_id=member_id).values(
-                'id', 'book__id', 'book__title', 'book__cover_image', 'member__library_id', 'reserved_at', 'expires_at', 'status'
-            ))
-        else:
-            reservations = list(Reservation.objects.values(
-                'id', 'book__id', 'book__title', 'book__cover_image', 'member__library_id', 'reserved_at', 'expires_at', 'status'
-            ))
-        return JsonResponse(reservations, safe=False)
+        try:
+            # First, update any expired reservations
+            now = timezone.now()
+            Reservation.objects.filter(
+                status='PENDING',
+                expires_at__lt=now
+            ).update(status='EXPIRED')
+            
+            member_id = request.GET.get('member_id')
+            if member_id:
+                reservations = list(Reservation.objects.filter(member_id=member_id).values(
+                    'id', 'book__id', 'book__title', 'book__cover_image', 'member__library_id', 'reserved_at', 'expires_at', 'status'
+                ))
+            else:
+                reservations = list(Reservation.objects.values(
+                    'id', 'book__id', 'book__title', 'book__cover_image', 'member__library_id', 'reserved_at', 'expires_at', 'status'
+                ))
+            return JsonResponse(reservations, safe=False)
+        except Exception as e:
+            return JsonResponse({'error': str(e), 'traceback': traceback.format_exc()}, status=500)
 
 
 @csrf_exempt
