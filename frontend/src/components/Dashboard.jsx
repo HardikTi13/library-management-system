@@ -117,7 +117,7 @@ function Dashboard({ user, member, books, loans, reservations, refreshData, show
                 <div key={loan.id} className="status-card">
                   <div className="card-image">
                     {loan.copy__book__cover_image ? (
-                      <img src={`/media/${loan.copy__book__cover_image}`} alt={loan.copy__book__title} />
+                      <img src={loan.copy__book__cover_image} alt={loan.copy__book__title} />
                     ) : (
                       <div className="placeholder-image">📚</div>
                     )}
@@ -145,7 +145,7 @@ function Dashboard({ user, member, books, loans, reservations, refreshData, show
                 <div key={res.id} className="status-card">
                   <div className="card-image">
                     {res.book__cover_image ? (
-                      <img src={`/media/${res.book__cover_image}`} alt={res.book__title} />
+                      <img src={res.book__cover_image} alt={res.book__title} />
                     ) : (
                       <div className="placeholder-image">📚</div>
                     )}
