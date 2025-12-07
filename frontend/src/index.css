@@ -377,11 +377,18 @@ h6 {
   transition: transform 0.6s;
   transform-style: preserve-3d;
   box-shadow: var(--shadow-md);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  /* Subtle border */
   border-radius: 8px;
+  background: white;
+  /* Ensure background */
 }
 
 .book-card:hover .book-inner {
   transform: rotateY(180deg);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary-color);
+  /* Highlight on hover */
 }
 
 .book-front,
