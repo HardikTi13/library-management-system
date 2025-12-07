@@ -227,7 +227,7 @@ class LoanCreateView(View):
             if Loan.objects.filter(member=member, status='ACTIVE').count() >= member.max_active_loans:
                 return JsonResponse({'error': 'Member has reached maximum active loans'}, status=400)
             
-            due_date = timezone.now() + timezone.timedelta(days=14)
+            due_date = timezone.now() + timezone.timedelta(minutes=30)
             loan = Loan.objects.create(
                 copy=copy,
                 member=member,
@@ -285,14 +285,16 @@ class LoanReturnView(View):
             penalty_data = None
             if loan.return_date > loan.due_date:
                 overdue_delta = loan.return_date - loan.due_date
-                overdue_days = overdue_delta.days + 1 # Charge for partial days
-                amount = overdue_days * 100.00 # 100 rupees per day
+                overdue_seconds = overdue_delta.total_seconds()
+                import math
+                overdue_hours = math.ceil(overdue_seconds / 3600)
+                amount = overdue_hours * 10.00 # 10 rupees per hour
                 
                 penalty = Penalty.objects.create(
                     member=loan.member,
                     loan=loan,
                     amount=amount,
-                    reason=f"Overdue by {overdue_days} days"
+                    reason=f"Overdue by {overdue_hours} hours"
                 )
                 penalty_data = {
                     'penalty_id': penalty.id,

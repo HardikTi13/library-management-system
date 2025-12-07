@@ -192,8 +192,8 @@ function Dashboard({ user, member, books, loans, reservations, refreshData, show
                 <p><strong>Book ID:</strong> {selectedBook.id}</p>
                 <hr style={{ margin: '1rem 0', borderColor: 'var(--border-color)' }} />
                 <p><strong>Charges:</strong> Free to borrow.</p>
-                <p><strong>Penalty:</strong> $1.00 per day overdue.</p>
-                <p><strong>Loan Period:</strong> 14 days.</p>
+                <p><strong>Penalty:</strong> $10.00 per hour overdue.</p>
+                <p><strong>Loan Period:</strong> 30 minutes.</p>
                 <div style={{ marginTop: '2rem' }}>
                     <button className="btn" onClick={() => handleReserve(selectedBook.id)}>
                         Reserve This Book
