@@ -355,6 +355,20 @@ h6 {
   box-shadow: none;
 }
 
+/* Uneven Grid Logic (Google Photos style) */
+.book-card:nth-child(5n) {
+  grid-column: span 2;
+}
+
+.book-card:nth-child(7n) {
+  grid-row: span 2;
+}
+
+.book-card:nth-child(11n) {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+
 .book-inner {
   position: relative;
   width: 100%;
