@@ -90,7 +90,7 @@ function LibrarianPanel({ showToast, refreshBooks }) {
     try {
       const res = await axios.post('/api/loans/return/', data);
       if (res.data.penalty) {
-        showToast(`Returned with penalty: $${res.data.penalty.amount}`, 'warning');
+        showToast(`Returned with penalty: ₹${res.data.penalty.amount}`, 'warning');
       } else {
         showToast('Book returned successfully');
       }
