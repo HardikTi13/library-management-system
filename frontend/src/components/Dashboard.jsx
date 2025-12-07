@@ -78,20 +78,29 @@ function Dashboard({ user, member, books, loans, reservations, refreshData, show
           </div>
           <div className="books-grid">
             {filteredBooks.map(book => (
-              <div key={book.id} className="book-card" onClick={() => setSelectedBook(book)}>
-                <div className="book-cover">
-                  {book.cover_image ? (
-                    <img src={book.cover_image} alt={book.title} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px 8px 0 0' }} />
-                  ) : (
-                    <span style={{ fontSize: '3rem' }}>📚</span>
-                  )}
-                </div>
-                <div className="book-info">
-                  <div className="book-title" title={book.title}>{book.title}</div>
-                  <div className="book-author">{book.author}</div>
-                  <div className="book-meta">
-                    <span className="chip">{book.category}</span>
-                    <small>ID: {book.id}</small>
+              <div key={book.id} className="book-card">
+                <div className="book-inner">
+                  <div className="book-front">
+                    {book.cover_image ? (
+                      <img src={book.cover_image} alt={book.title} />
+                    ) : (
+                      <div className="placeholder-cover">
+                        <span style={{ fontSize: '3rem' }}>📚</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="book-back">
+                    <div className="book-info">
+                      <div className="book-title" title={book.title}>{book.title}</div>
+                      <div className="book-author">{book.author}</div>
+                      <div className="book-meta">
+                        <span className="chip">{book.category}</span>
+                      </div>
+                      <p className="book-about">{book.about || "No description available."}</p>
+                      <button className="btn reserve-btn" onClick={(e) => { e.stopPropagation(); handleReserve(book.id); }}>
+                        Reserve
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -124,6 +124,7 @@ function LibrarianPanel({ showToast, refreshBooks }) {
             <div className="form-group"><label>Author</label><input name="author" required /></div>
             <div className="form-group"><label>ISBN</label><input name="isbn" required /></div>
             <div className="form-group"><label>Category</label><input name="category" required /></div>
+            <div className="form-group"><label>About Book</label><textarea name="about" rows="3" style={{ width: '100%', padding: '0.875rem', border: '1px solid var(--border-color)', borderRadius: '4px', fontFamily: 'inherit' }}></textarea></div>
             <div className="form-group">
               <label>Cover Image</label>
               <input type="file" name="cover_image" accept="image/*" />

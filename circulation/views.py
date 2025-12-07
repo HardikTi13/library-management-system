@@ -28,6 +28,9 @@ class BookListCreateView(View):
                 'author': book.author,
                 'isbn': book.isbn,
                 'category': book.category,
+                'isbn': book.isbn,
+                'category': book.category,
+                'about': book.about,
                 'cover_image': book.cover_image.url if book.cover_image else None,
                 'created_at': book.created_at,
                 'updated_at': book.updated_at,
@@ -43,6 +46,7 @@ class BookListCreateView(View):
                 author = request.POST.get('author')
                 isbn = request.POST.get('isbn')
                 category = request.POST.get('category')
+                about = request.POST.get('about')
                 cover_image = request.FILES.get('cover_image')
                 
                 book = Book.objects.create(
@@ -50,6 +54,7 @@ class BookListCreateView(View):
                     author=author,
                     isbn=isbn,
                     category=category,
+                    about=about,
                     cover_image=cover_image
                 )
             else:
@@ -59,7 +64,8 @@ class BookListCreateView(View):
                     title=data['title'],
                     author=data['author'],
                     isbn=data['isbn'],
-                    category=data['category']
+                    category=data['category'],
+                    about=data.get('about')
                 )
             
             return JsonResponse({
@@ -279,7 +285,7 @@ class LoanReturnView(View):
             if loan.return_date > loan.due_date:
                 overdue_delta = loan.return_date - loan.due_date
                 overdue_days = overdue_delta.days + 1 # Charge for partial days
-                amount = overdue_days * 1.00 # $1.00 per day
+                amount = overdue_days * 100.00 # 100 rupees per day
                 
                 penalty = Penalty.objects.create(
                     member=loan.member,
