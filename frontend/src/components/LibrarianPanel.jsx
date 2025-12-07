@@ -125,7 +125,7 @@ function LibrarianPanel({ showToast, refreshBooks }) {
             <div className="form-group"><label>ISBN</label><input name="isbn" required /></div>
             <div className="form-group"><label>Category</label><input name="category" required /></div>
             <div className="form-group">
-              <label>Cover Image (optional)</label>
+              <label>Cover Image</label>
               <input type="file" name="cover_image" accept="image/*" />
             </div>
             <button type="submit" className="btn">Add Book</button>
@@ -135,7 +135,8 @@ function LibrarianPanel({ showToast, refreshBooks }) {
         {activeTab === 'add-copy' && (
           <form onSubmit={handleAddCopy} className="admin-form">
             <div className="form-group"><label>Book ID</label><input name="book_id" type="number" required /></div>
-            <button type="submit" className="btn">Add Copy (Auto-ID)</button>
+            <div className="form-group"><label>Number of Copies</label><input name="count" type="number" min="1" defaultValue="1" required /></div>
+            <button type="submit" className="btn">Add Copies</button>
           </form>
         )}
 

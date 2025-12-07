@@ -150,18 +150,24 @@ class BookCopyListCreateView(View):
             if not Book.objects.filter(id=book_id).exists():
                 return JsonResponse({'error': 'Book not found'}, status=404)
             
-            # Auto-generate internal barcode
-            internal_barcode = f"COPY-{uuid.uuid4().hex[:8].upper()}"
+            data = json.loads(request.body)
+            count = int(data.get('count', 1))
             
-            copy = BookCopy.objects.create(
-                book_id=book_id,
-                barcode=internal_barcode
-            )
+            created_copies = []
+            for _ in range(count):
+                # Auto-generate internal barcode
+                internal_barcode = f"COPY-{uuid.uuid4().hex[:8].upper()}"
+                
+                copy = BookCopy.objects.create(
+                    book_id=book_id,
+                    barcode=internal_barcode
+                )
+                created_copies.append(copy.barcode)
+            
             return JsonResponse({
-                'id': copy.id,
-                'barcode': copy.barcode,
-                'status': copy.status,
-                'message': 'Book copy created successfully'
+                'message': f'{count} copies created successfully',
+                'count': count,
+                'barcodes': created_copies
             }, status=201)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=400)
