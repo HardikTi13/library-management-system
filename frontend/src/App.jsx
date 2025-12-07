@@ -14,6 +14,16 @@ function App() {
   const [loans, setLoans] = useState([]);
   const [reservations, setReservations] = useState([]);
   const [toast, setToast] = useState(null);
+  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
+
+  useEffect(() => {
+    document.body.className = theme === 'dark' ? 'dark-mode' : '';
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+  };
 
   useEffect(() => {
     if (user) {
@@ -79,6 +89,9 @@ function App() {
       <nav className="navbar">
         <div className="logo">Library<span className="highlight">Flow</span></div>
         <div className="nav-links">
+          <button onClick={toggleTheme} title="Toggle Theme" style={{ fontSize: '1.2rem', marginRight: '0.5rem' }}>
+            {theme === 'dark' ? '☀️' : '🌙'}
+          </button>
           <span style={{ marginRight: '1rem', color: 'var(--text-secondary)' }}>
             {isLibrarian ? '👨‍💼 Librarian' : '👤 Member'}: {user.username}
           </span>

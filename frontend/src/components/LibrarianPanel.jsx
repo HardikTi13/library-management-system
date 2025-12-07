@@ -6,8 +6,12 @@ function LibrarianPanel({ showToast, refreshBooks }) {
   const [reservations, setReservations] = useState([]);
   const [loans, setLoans] = useState([]);
 
+  /* Filter State */
+  const [activeFilter, setActiveFilter] = useState('ALL');
+
   // Fetch all reservations and loans when component mounts or tab changes
   useEffect(() => {
+    setActiveFilter('ALL'); // Reset filter when tab changes
     if (activeTab === 'reservations') {
       fetchReservations();
     } else if (activeTab === 'loans') {
@@ -18,7 +22,7 @@ function LibrarianPanel({ showToast, refreshBooks }) {
   const fetchReservations = async () => {
     try {
       const res = await axios.get('/api/reservations/list/');
-      setReservations(res.data);
+      setReservations(res.data.sort((a, b) => new Date(b.reserved_at) - new Date(a.reserved_at)));
     } catch (err) {
       showToast('Failed to fetch reservations', 'error');
     }
@@ -27,7 +31,7 @@ function LibrarianPanel({ showToast, refreshBooks }) {
   const fetchLoans = async () => {
     try {
       const res = await axios.get('/api/loans/');
-      setLoans(res.data);
+      setLoans(res.data.sort((a, b) => b.id - a.id));
     } catch (err) {
       showToast('Failed to fetch loans', 'error');
     }
@@ -159,8 +163,34 @@ function LibrarianPanel({ showToast, refreshBooks }) {
 
         {activeTab === 'loans' && (
           <div className="loans-list">
-            <h3 style={{ marginBottom: '1rem' }}>All Loans</h3>
-            {loans.length === 0 ? (
+            <div style={{ marginBottom: '1.5rem' }}>
+                <h3 style={{ marginBottom: '1rem' }}>All Loans</h3>
+                <div className="filter-chips" style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    {['ALL', 'ACTIVE', 'RETURNED', 'OVERDUE'].map(status => (
+                        <button
+                            key={status}
+                            onClick={() => setActiveFilter(status)}
+                            style={{
+                                padding: '0.5rem 1.25rem',
+                                borderRadius: '50px',
+                                border: 'none',
+                                background: activeFilter === status ? '#ffffff' : 'transparent',
+                                color: activeFilter === status ? (status === 'OVERDUE' ? '#c0392b' : '#3498db') : 'var(--text-secondary)',
+                                boxShadow: activeFilter === status ? '0 2px 5px rgba(0,0,0,0.1)' : 'none',
+                                fontWeight: '700',
+                                fontSize: '0.8rem',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease',
+                                border: activeFilter !== status ? '1px solid transparent' : 'none',
+                                position: 'relative'
+                            }}
+                        >
+                            {status === 'ALL' ? 'All Loans' : status.charAt(0) + status.slice(1).toLowerCase()}
+                        </button>
+                    ))}
+                </div>
+            </div>
+            {loans.filter(l => activeFilter === 'ALL' || l.status === activeFilter).length === 0 ? (
               <p style={{ color: 'var(--text-secondary)', textAlign: 'center' }}>No loans found.</p>
             ) : (
               <div style={{ overflowX: 'auto' }}>
@@ -170,18 +200,14 @@ function LibrarianPanel({ showToast, refreshBooks }) {
                       <th style={{ padding: '0.75rem', textAlign: 'left' }}>Book Title</th>
                       <th style={{ padding: '0.75rem', textAlign: 'left' }}>Due Date</th>
                       <th style={{ padding: '0.75rem', textAlign: 'left' }}>Return Date</th>
-                      <th style={{ padding: '0.75rem', textAlign: 'left' }}>Status</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {loans.map(loan => (
+                    {loans.filter(l => activeFilter === 'ALL' || l.status === activeFilter).map(loan => (
                       <tr key={loan.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
                         <td style={{ padding: '0.75rem' }}>{loan.copy__book__title}</td>
                         <td style={{ padding: '0.75rem' }}>{formatDate(loan.due_date)}</td>
                         <td style={{ padding: '0.75rem' }}>{formatDate(loan.return_date)}</td>
-                        <td style={{ padding: '0.75rem' }}>
-                          <span className={`status-badge status-${loan.status.toLowerCase()}`}>{loan.status}</span>
-                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -193,8 +219,33 @@ function LibrarianPanel({ showToast, refreshBooks }) {
 
         {activeTab === 'reservations' && (
           <div className="reservations-list">
-            <h3 style={{ marginBottom: '1rem' }}>All Reservations</h3>
-            {reservations.length === 0 ? (
+            <div style={{ marginBottom: '1.5rem' }}>
+                <h3 style={{ marginBottom: '1rem' }}>All Reservations</h3>
+                <div className="filter-chips" style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    {['ALL', 'PENDING', 'FULFILLED', 'EXPIRED', 'CANCELLED'].map(status => (
+                        <button
+                            key={status}
+                            onClick={() => setActiveFilter(status)}
+                            style={{
+                                padding: '0.5rem 1.25rem',
+                                borderRadius: '50px',
+                                border: 'none',
+                                background: activeFilter === status ? '#ffffff' : 'transparent',
+                                color: activeFilter === status ? '#3498db' : 'var(--text-secondary)',
+                                boxShadow: activeFilter === status ? '0 2px 5px rgba(0,0,0,0.1)' : 'none',
+                                fontWeight: '700',
+                                fontSize: '0.8rem',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease',
+                                border: activeFilter !== status ? '1px solid transparent' : 'none',
+                            }}
+                        >
+                            {status === 'ALL' ? 'All Reservations' : status.charAt(0) + status.slice(1).toLowerCase()}
+                        </button>
+                    ))}
+                </div>
+            </div>
+            {reservations.filter(r => activeFilter === 'ALL' || r.status === activeFilter).length === 0 ? (
               <p style={{ color: 'var(--text-secondary)', textAlign: 'center' }}>No reservations found.</p>
             ) : (
               <div style={{ overflowX: 'auto' }}>
@@ -206,21 +257,17 @@ function LibrarianPanel({ showToast, refreshBooks }) {
                       <th style={{ padding: '0.75rem', textAlign: 'left' }}>Library ID</th>
                       <th style={{ padding: '0.75rem', textAlign: 'left' }}>Reserved At</th>
                       <th style={{ padding: '0.75rem', textAlign: 'left' }}>Expires At</th>
-                      <th style={{ padding: '0.75rem', textAlign: 'left' }}>Status</th>
                       <th style={{ padding: '0.75rem', textAlign: 'left' }}>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {reservations.map(res => (
+                    {reservations.filter(r => activeFilter === 'ALL' || r.status === activeFilter).map(res => (
                       <tr key={res.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
                         <td style={{ padding: '0.75rem', fontWeight: 'bold', color: 'var(--primary-color)' }}>{res.book__id}</td>
                         <td style={{ padding: '0.75rem' }}>{res.book__title}</td>
                         <td style={{ padding: '0.75rem', fontFamily: 'monospace', fontSize: '0.9rem' }}>{res.member__library_id}</td>
                         <td style={{ padding: '0.75rem' }}>{formatDate(res.reserved_at)}</td>
                         <td style={{ padding: '0.75rem' }}>{formatDate(res.expires_at)}</td>
-                        <td style={{ padding: '0.75rem' }}>
-                          <span className={`status-badge status-${res.status.toLowerCase()}`}>{res.status}</span>
-                        </td>
                         <td style={{ padding: '0.75rem' }}>
                           {res.status === 'PENDING' && (
                             <button 
