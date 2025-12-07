@@ -363,11 +363,11 @@ class LoanListView(View):
         member_id = request.GET.get('member_id')
         if member_id:
             loans = list(Loan.objects.filter(member_id=member_id).values(
-                'id', 'copy__book__id', 'copy__book__title', 'due_date', 'return_date', 'status'
+                'id', 'copy__book__id', 'copy__book__title', 'copy__book__cover_image', 'due_date', 'return_date', 'status'
             ))
         else:
             loans = list(Loan.objects.values(
-                'id', 'copy__book__id', 'copy__book__title', 'due_date', 'return_date', 'status'
+                'id', 'copy__book__id', 'copy__book__title', 'copy__book__cover_image', 'due_date', 'return_date', 'status'
             ))
         return JsonResponse(loans, safe=False)
 
@@ -385,11 +385,11 @@ class ReservationListView(View):
         member_id = request.GET.get('member_id')
         if member_id:
             reservations = list(Reservation.objects.filter(member_id=member_id).values(
-                'id', 'book__id', 'book__title', 'member__library_id', 'reserved_at', 'expires_at', 'status'
+                'id', 'book__id', 'book__title', 'book__cover_image', 'member__library_id', 'reserved_at', 'expires_at', 'status'
             ))
         else:
             reservations = list(Reservation.objects.values(
-                'id', 'book__id', 'book__title', 'member__library_id', 'reserved_at', 'expires_at', 'status'
+                'id', 'book__id', 'book__title', 'book__cover_image', 'member__library_id', 'reserved_at', 'expires_at', 'status'
             ))
         return JsonResponse(reservations, safe=False)
 
